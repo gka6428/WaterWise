@@ -1,1 +1,1 @@
-# WaterWise README 생성을 위한 실험
+# WaterWise repository에 대한 소개를 하는 README.md입니다.
