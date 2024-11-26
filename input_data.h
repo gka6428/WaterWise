@@ -5,6 +5,7 @@
 #ifndef INPUT_DATA_H
 #define INPUT_DATA_H
 
+#define _CRT_SECURE_NO_WARNINGS // scanf_s는 문자열 입력이 불가능하여 scanf 사용을 위해 정의함
 # include <stdio.h>
 # include <string.h>
 #define ARRAY_SIZE_OF_NAME_OF_REGION 30      // 측정지역명을 담을 배열의 길이 지정               
@@ -19,7 +20,7 @@ typedef struct indicators {
     char name_of_region[ARRAY_SIZE_OF_NAME_OF_REGION];
     char year[ARRAY_SIZE_OF_YEAR];
     char round[ARRAY_SIZE_OF_THE_NUMBER_OF_ROUND];
-    char indicators[THE_NUMBER_OF_INDICATORS][2][50]; 
+    char indicators[THE_NUMBER_OF_INDICATORS][3][50]; 
 } INDICATORS;
 
 // 초기화하지 않은 지표구조체 정의
@@ -106,36 +107,60 @@ void insert_info_to_struct(void)
     printf("입력 완료. \n\n");
 
     // 절차 3) (미완)각각의 지표 구조체에 지표 입력(수동, 각 지표마다 단위 입력은 자동)
-    // for (i = 0; i < THE_NUMBER_OF_REGION; i++)
-    // {
-    //     insert_indicators_infor_to_indiArr(&indi[i]);
-    //     insert_measure_of_references_to_measureArr(&indi[i]);
-    // }
-    
+    for (i = 0; i < THE_NUMBER_OF_REGION; i++)
+    {
+        printf("(%d/10)\n", i);
+        insert_indicators_infor_to_indiArr(&indi[i]); // 각 지표의 측정값과 단위 삽입
+    }
 }
 
 // "정의된 지표구조체에 정보 넣어주기" 함수의 하위 함수들 
 void insert_name_of_region_to_nameArr(INDICATORS* indicators, const int i)
 {
-    strcpy(indicators->name_of_region, nameOfRegion_list[i]);
+    strcpy_s(indicators->name_of_region, sizeof(indicators->name_of_region), nameOfRegion_list[i]);
     printf("%s\n", nameOfRegion_list[i]);
 }
 
 void insert_year_infor_to_yearArr(INDICATORS* indicators, char* yearArr)
 {   
     char *ptr = strtok(yearArr,"년");
-    strcpy(indicators->year, ptr);
+    strcpy_s(indicators->year, sizeof(indicators->year), ptr);
     printf("%s가 연도에 저장됨.\n", indicators->year);
 }
 
 void insert_round_infor_to_roundArr(INDICATORS* indicators, char* roundArr)
 {   
     char *ptr = strtok(roundArr,"회");
-    strcpy(indicators->round, ptr);
+    strcpy_s(indicators->round, sizeof(indicators->round), ptr);
     printf("%s가 측정회차에 저장됨.\n", indicators->round);
 }
 
-// void insert_indicators_infor_to_indiArr();
+void insert_indicators_infor_to_indiArr(INDICATORS* indicators)
+{
+    int i;
+    printf("지표에 대해 입력하세요.\n");
+    char answer[30];
+    for (i = 0; i < THE_NUMBER_OF_INDICATORS; i++)
+    {
+        if (i == 0) {
+            printf("%s 농도: ", indicators_list[i]);
+            scanf("%s", answer);
+            strcpy_s(indicators->indicators[i][2], sizeof(indicators->indicators[i][2]), "pH");
+        }
+        else if (i >= 1 || i <= 6) {
+            printf("%s의 양: ", indicators_list[i]);
+            scanf("%s", answer);
+            strcpy_s(indicators->indicators[i][2], sizeof(indicators->indicators[i][2]), "mg/L");
+        }
+        else {
+            printf("%s의 수: ", indicators_list[i]);
+            scanf("%s", answer);
+            strcpy_s(indicators->indicators[i][2], sizeof(indicators->indicators[i][2]), "mL");
+        }
+        strcpy_s(indicators->indicators[i][1], sizeof(indicators->indicators[i][1]), answer);
+        printf("%s로 입력하셨습니다.\n", answer);
+    } 
+}
 
 // 지역 리스트 변경(삭제 후 추가 기능/추가 기능)
 
